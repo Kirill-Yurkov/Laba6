@@ -9,8 +9,6 @@ import java.util.Arrays;
 
 public class Main {
     public static void main(String[] args) {
-        //  src/main/resources/Collection.xml
-        //  execute_script C:\Users\Ender\Desktop\Script.txt
 
         Server server = new Server(new BufferedReader(new InputStreamReader(System.in)), new BufferedOutputStream(System.out));
         if(args.length==1){
