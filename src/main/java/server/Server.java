@@ -51,6 +51,13 @@ public class Server {
         inputOutput.setWriter(writer);
     }
 
+    public static void main(String[] args) {
+        Server server = new Server(new BufferedReader(new InputStreamReader(System.in)), new BufferedOutputStream(System.out));
+        if (args.length == 1) {
+            server.getFileManager().initializeFile(args[0]);
+        }
+        server.start();
+    }
     public void stop() {
         serverOn = false;
         try {
@@ -66,21 +73,31 @@ public class Server {
     public void start() {
         if (fileManager.initializeFile()) {
             serverOn = true;
+            boolean isCommandWas = true;
             while (serverOn) {
                 try {
-                    inputOutput.outPut("Введите комманду (для справки используйте комманду help) \n~ ");
+                    if (isCommandWas){
+                        inputOutput.outPut("Введите комманду (для справки используйте комманду help) \n~ ");
+                    } else {
+                        inputOutput.outPut("~ ");
+                    }
                     String commandFromConsole = inputOutput.inPut();
                     if (commandFromConsole == null){
                         inputOutput.outPut("\nПолучен сигнал завершения работы.");
                         serverOn = false;
                         return;
                     }
-                    String str = invoke(commandFromConsole);
-                    if (str != null) {
-                        inputOutput.outPut(str + "\n");
-                        inputOutput.outPut("\n");
+                    if(commandFromConsole.isBlank() || commandFromConsole.isEmpty()){
+                        isCommandWas = false;
                     } else {
-                        inputOutput.outPut("\n");
+                        isCommandWas = true;
+                        String str = invoke(commandFromConsole);
+                        if (str != null) {
+                            inputOutput.outPut(str + "\n");
+                            inputOutput.outPut("\n");
+                        } else {
+                            inputOutput.outPut("\n");
+                        }
                     }
                 } catch (StopServerException e) {
                     inputOutput.outPut("Command isn't valid: " + e.getMessage() + "\n");

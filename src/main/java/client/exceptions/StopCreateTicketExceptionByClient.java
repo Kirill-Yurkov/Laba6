@@ -1,4 +1,4 @@
-package server.exceptions;
+package client.exceptions;
 /**
  * The StopCreateTicketExceptionByClient class is a custom exception that is thrown when the creation of a ticket needs to be stopped.
  * This exception can be used to handle specific scenarios where the creation of a ticket should not proceed.
@@ -13,5 +13,5 @@ package server.exceptions;
  *
  * @since 1.0
  */
-public class StopCreateTicketException extends Exception{
+public class StopCreateTicketExceptionByClient extends Exception{
 }
