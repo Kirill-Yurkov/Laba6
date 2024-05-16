@@ -1,7 +1,10 @@
-package server.patternclass;
+package commons.patternclass;
 
 import lombok.Getter;
 import lombok.Setter;
+
+import java.io.Serializable;
+
 /**
  * The 'Event' class represents an event with various attributes.
  *
@@ -20,7 +23,7 @@ import lombok.Setter;
  */
 @Setter
 @Getter
-public class Event {
+public class Event implements Serializable {
     private Integer id; //Поле не может быть null, Значение поля должно быть больше 0, Значение этого поля должно быть уникальным, Значение этого поля должно генерироваться автоматически
     private String name; //Поле не может быть null, Строка не может быть пустой
     private Long minAge; //Поле может быть null

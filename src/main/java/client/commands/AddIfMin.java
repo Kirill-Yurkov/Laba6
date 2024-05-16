@@ -3,13 +3,12 @@ package client.commands;
 import client.Client;
 import client.commands.interfaces.Command;
 import client.exceptions.*;
-import client.utilities.CommandValues;
-import client.patternclass.Ticket;
-import client.utilities.Request;
-import client.utilities.Validator;
+import commons.exceptions.StopCreateTicketExceptionByClient;
+import commons.utilities.CommandValues;
+import commons.patternclass.Ticket;
+import commons.utilities.Request;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * The 'AddIfMin' class represents a command that adds a new element to the collection if its value is smaller than the value of the smallest element in the collection.

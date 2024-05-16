@@ -2,11 +2,9 @@ package client.commands;
 
 import client.Client;
 import client.commands.interfaces.Command;
-import client.exceptions.CommandCollectionZeroException;
-import client.utilities.CommandValues;
-import client.utilities.Request;
-
-import java.util.ArrayList;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 /**
  * The AverageOfPrice class represents a command that calculates the average value of the 'price' field for all elements in the collection.

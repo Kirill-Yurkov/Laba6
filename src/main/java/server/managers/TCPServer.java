@@ -1,84 +1,87 @@
 package server.managers;
 
+import commons.utilities.Response;
+
 import java.io.*;
 import java.net.*;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.logging.*;
 
 public class TCPServer {
-    public static void main(String[] args) {
-        ServerSocket serverSocket = null;
+    private static final int PORT = 7777;
+    public static final Logger LOGGER = Logger.getLogger(TCPServer.class.getName());
+
+    static {
         try {
-            serverSocket = new ServerSocket(7777);
-            System.out.println("Сервер запущен. Ожидание подключений...");
+            LogManager.getLogManager().reset();
+            LOGGER.setLevel(Level.ALL);
+
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setLevel(Level.ALL);
+            LOGGER.addHandler(consoleHandler);
+
+            FileHandler fileHandler = new FileHandler("server.log", true);
+            fileHandler.setLevel(Level.ALL);
+            fileHandler.setFormatter(new SimpleFormatter());
+            LOGGER.addHandler(fileHandler);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Ошибка настройки логгера: " + e.getMessage(), e);
+        }
+    }
+
+    public static void main(String[] args) {
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            LOGGER.info("Сервер запущен и ожидает подключения на порту " + PORT);
 
             while (true) {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Новый клиент подключен: " + clientSocket);
-
-                // Создаем отдельный поток для обработки каждого клиента
-                ClientHandler clientHandler = new ClientHandler(clientSocket);
-                clientHandler.start();
+                try {
+                    Socket clientSocket = serverSocket.accept();
+                    LOGGER.info("Клиент подключился: " + clientSocket.getInetAddress());
+                    new ClientHandler(clientSocket).start();
+                } catch (IOException e) {
+                    LOGGER.log(Level.SEVERE, "Ошибка при подключении клиента: " + e.getMessage(), e);
+                }
             }
         } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (serverSocket != null)
-                    serverSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            LOGGER.log(Level.SEVERE, "Ошибка запуска сервера: " + e.getMessage(), e);
         }
     }
 }
 
 class ClientHandler extends Thread {
-    private final Socket clientSocket;
+    private Socket clientSocket;
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
     }
 
+    @Override
     public void run() {
-        try {
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+        try (ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())) {
 
-            String inputLine;
-            while ((inputLine = in.readLine()) != null) {
-                System.out.println("От клиента: " + inputLine);
+            Object inputObject;
 
-                // Разбираем команду и аргументы
-                String[] parts = inputLine.split(" ");
-                String command = parts[0];
-                String response = "";
-
-                // Обрабатываем команды
-                switch (command) {
-                    case "TIME":
-                        response = getCurrentTime();
-                        break;
-                    // Добавьте обработку других команд здесь, если необходимо
-                    default:
-                        response = "Unknown command";
-                        break;
+            while ((inputObject = in.readObject()) != null) {
+                if (inputObject instanceof Response) {
+                    Response response = (Response) inputObject;
+                    Object result = response.getName()+"АХУЕННО";
+                    out.writeObject(result);
+                    out.flush();
+                    TCPServer.LOGGER.info("Выполнена команда: " + response.getClass().getSimpleName() + " от клиента " + clientSocket.getInetAddress());
+                } else {
+                    TCPServer.LOGGER.warning("Получен неверный объект от клиента " + clientSocket.getInetAddress());
                 }
-
-                out.println(response); // Отправляем ответ клиенту
             }
-
-            in.close();
-            out.close();
-            clientSocket.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (SocketException ignored){}
+        catch (IOException | ClassNotFoundException  e) {
+            TCPServer.LOGGER.log(Level.SEVERE, "Ошибка в обработке клиента: " + e.getMessage(), e);
+        } finally {
+            try {
+                clientSocket.close();
+            } catch (IOException e) {
+                TCPServer.LOGGER.log(Level.SEVERE, "Ошибка при закрытии соединения с клиентом: " + e.getMessage(), e);
+            }
+            TCPServer.LOGGER.info("Клиент отключился: " + clientSocket.getInetAddress());
         }
-    }
-
-    private String getCurrentTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm:ss");
-        Date date = new Date();
-        return formatter.format(date);
     }
 }

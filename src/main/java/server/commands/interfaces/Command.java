@@ -1,10 +1,10 @@
 package server.commands.interfaces;
 
 import server.Server;
-import server.exceptions.CommandCollectionZeroException;
-import server.exceptions.CommandValueException;
-import server.exceptions.StopServerException;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.exceptions.StopServerException;
+import commons.utilities.CommandValues;
 
 public interface Command {
     CommandValues getValue();

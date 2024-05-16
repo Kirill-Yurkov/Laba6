@@ -2,10 +2,9 @@ package client.commands;
 
 import client.commands.interfaces.Command;
 import client.Client;
-import client.exceptions.CommandCollectionZeroException;
-import client.patternclass.Ticket;
-import client.utilities.CommandValues;
-import client.utilities.Request;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 /**
  * The Show class represents a command that displays all elements of the collection in a string representation.

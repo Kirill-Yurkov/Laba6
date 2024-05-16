@@ -2,8 +2,8 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.StopServerException;
-import server.utilities.CommandValues;
+import commons.exceptions.StopServerException;
+import commons.utilities.CommandValues;
 /**
  * The Exit class represents a command to exit the program without saving to a file.
  * It implements the Command interface and provides the necessary methods to execute the command.

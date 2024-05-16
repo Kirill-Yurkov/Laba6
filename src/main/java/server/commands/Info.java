@@ -2,8 +2,8 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.utilities.CommandValues;
 /**
  * The Info class implements the Command interface and represents a command to display information about the collection.
  * It provides methods to get the command value, set the server, execute the command, get the command name, and get the command description.

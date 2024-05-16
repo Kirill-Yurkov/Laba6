@@ -1,13 +1,10 @@
 package client.commands.interfaces;
 
 import client.Client;
-import client.exceptions.BadResponseException;
-import client.exceptions.CommandCollectionZeroException;
-import client.exceptions.CommandValueException;
-import client.utilities.CommandValues;
-import client.utilities.Request;
-
-import java.util.ArrayList;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 public interface Command {
     CommandValues getValue();

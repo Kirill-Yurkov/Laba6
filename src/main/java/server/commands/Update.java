@@ -2,11 +2,11 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.exceptions.CommandValueException;
-import server.exceptions.StopCreateTicketException;
-import server.patternclass.Ticket;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.exceptions.StopCreateTicketExceptionByClient;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
 /**
  * The 'Update' class represents a command that updates the value of an element in the collection
  * with the specified ID.
@@ -55,7 +55,7 @@ public class Update implements Command {
                     }
                     server.getListManager().add(newTicket);
                     return "successfully";
-                } catch (StopCreateTicketException e) {
+                } catch (StopCreateTicketExceptionByClient e) {
                     return null;
                 }
             }

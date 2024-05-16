@@ -2,7 +2,7 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.utilities.CommandValues;
+import commons.utilities.CommandValues;
 /**
  * The Save class represents a command to save the collection to a file.
  * It implements the Command interface.

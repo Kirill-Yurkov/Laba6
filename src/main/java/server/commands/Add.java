@@ -2,9 +2,9 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.StopCreateTicketException;
-import server.patternclass.Ticket;
-import server.utilities.CommandValues;
+import commons.exceptions.StopCreateTicketExceptionByClient;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
 /**
  * The 'Add' class is responsible for adding a new element to the collection.
  * It implements the 'Command' interface and provides the necessary methods to execute the command.
@@ -55,7 +55,7 @@ public class Add implements Command {
 
             server.getListManager().add(ticket);
             return "Successfully created";
-        } catch (StopCreateTicketException e) {
+        } catch (StopCreateTicketExceptionByClient e) {
             return null;
         }
 

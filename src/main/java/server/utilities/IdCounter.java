@@ -2,8 +2,8 @@ package server.utilities;
 
 import lombok.Getter;
 import server.Server;
-import server.patternclass.Event;
-import server.patternclass.Ticket;
+import commons.patternclass.Event;
+import commons.patternclass.Ticket;
 
 import java.util.HashMap;
 /**

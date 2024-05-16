@@ -1,19 +1,19 @@
 package server.commands;
 
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.exceptions.StopCreateTicketExceptionByClient;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.exceptions.CommandValueException;
-import server.exceptions.StopCreateTicketException;
-import server.exceptions.StopServerException;
-import server.patternclass.Ticket;
-import server.utilities.CommandValues;
+
 /**
  * The 'AddIfMin' class represents a command that adds a new element to the collection if its value is smaller than the value of the smallest element in the collection.
- *
+ * <p>
  * Attributes:
  * - server: Server (required) - The server object that contains the list manager and ticket creator.
- *
+ * <p>
  * Methods:
  * - getValue(): CommandValues - Returns the value of the command.
  * - setServer(Server server): void - Sets the server object.
@@ -23,6 +23,7 @@ import server.utilities.CommandValues;
  */
 public class AddIfMin implements Command {
     private Server server;
+
     @Override
     public CommandValues getValue() {
         return CommandValues.ELEMENT;
@@ -34,26 +35,26 @@ public class AddIfMin implements Command {
     }
 
     @Override
-    public String execute(String value) throws  CommandValueException, CommandCollectionZeroException {
-        if(server.getListManager().getTicketList().isEmpty()){
+    public String execute(String value) throws CommandValueException, CommandCollectionZeroException {
+        if (server.getListManager().getTicketList().isEmpty()) {
             throw new CommandCollectionZeroException("collection is zero");
         }
         try {
             Ticket ticket = server.getTicketCreator().createTicketGroup();
             int mini = Integer.MAX_VALUE;
             for (Ticket localTicket : server.getListManager().getTicketList()) {
-                if (localTicket.getPrice() != null && localTicket.getPrice()<mini) {
+                if (localTicket.getPrice() != null && localTicket.getPrice() < mini) {
                     mini = localTicket.getPrice();
                 }
             }
-            if(ticket.getPrice()<mini){
+            if (ticket.getPrice() < mini) {
                 ticket.setId(server.getIdCounter().getIdForTicket(ticket));
-                if(ticket.getEvent()!=null){
+                if (ticket.getEvent() != null) {
                     ticket.getEvent().setId(server.getIdCounter().getIdForEvent(ticket.getEvent()));
                 }
                 return "successfully";
             }
-        } catch (StopCreateTicketException e) {
+        } catch (StopCreateTicketExceptionByClient e) {
             return null;
         }
         throw new CommandValueException("price more than minimal");

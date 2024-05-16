@@ -1,4 +1,7 @@
-package server.utilities;
+package commons.utilities;
+
+import java.io.Serializable;
+
 /**
  * The CommandValues class represents the possible values for a command.
  * It is an enumeration that includes the following values:
@@ -7,7 +10,7 @@ package server.utilities;
  * - ELEMENT: Represents a single element.
  * - VALUE_ELEMENT: Represents a combination of a value and an element.
  */
-public enum CommandValues {
+public enum CommandValues implements Serializable {
     NOTHING,
     VALUE,
     ELEMENT,

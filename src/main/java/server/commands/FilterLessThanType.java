@@ -2,11 +2,11 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.exceptions.CommandValueException;
-import server.patternclass.Ticket;
-import server.patternclass.TicketType;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.patternclass.Ticket;
+import commons.patternclass.TicketType;
+import commons.utilities.CommandValues;
 /**
  * The FilterLessThanType class represents a command that filters and returns the elements from the ticket list
  * whose type has a lower priority than the specified value.

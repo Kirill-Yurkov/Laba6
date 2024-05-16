@@ -2,11 +2,10 @@ package client.commands;
 
 import client.commands.interfaces.Command;
 import client.Client;
-import client.exceptions.CommandCollectionZeroException;
-import client.exceptions.CommandValueException;
-import client.patternclass.Ticket;
-import client.utilities.CommandValues;
-import client.utilities.Request;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 import java.util.ArrayList;
 

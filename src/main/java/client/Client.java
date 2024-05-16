@@ -5,6 +5,10 @@ import client.managers.CommandInvoker;
 import client.managers.InputOutput;
 import client.managers.TCPClient;
 import client.utilities.TicketCreator;
+import commons.exceptions.BadResponseException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.exceptions.StopServerException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -20,15 +24,14 @@ public class Client {
     @Setter
     private boolean withFile = false;
 
-    public Client(BufferedReader readerConsole, ObjectInputStream readerPort, BufferedOutputStream writer ) {
+    public Client(BufferedReader readerConsole, BufferedOutputStream writer ) {
         inputOutput.setReaderConsole(readerConsole);
-        inputOutput.setReaderPort(readerPort);
         inputOutput.setWriter(writer);
     }
 
 
     public static void main(String[] args) {
-        Client client = new Client(null, null, null);
+        Client client = new Client(new BufferedReader(new InputStreamReader(System.in)), new BufferedOutputStream(System.out));
         client.start();
     }
 
@@ -36,7 +39,6 @@ public class Client {
         clientOn = false;
         try {
             inputOutput.getReaderConsole().close();
-            inputOutput.getReaderPort().close();
             inputOutput.getWriter().close();
         } catch (IOException e) {
             throw new RuntimeException(e);

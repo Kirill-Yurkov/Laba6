@@ -1,4 +1,4 @@
-package client.utilities;
+package commons.utilities;
 
 
 import lombok.Getter;

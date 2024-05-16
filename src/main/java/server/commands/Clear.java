@@ -2,9 +2,9 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.patternclass.Ticket;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
 
 import java.util.ArrayList;
 import java.util.List;

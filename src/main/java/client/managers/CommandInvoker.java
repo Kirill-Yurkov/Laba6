@@ -4,8 +4,11 @@ import client.Client;
 import client.commands.*;
 import client.commands.interfaces.Command;
 import client.exceptions.*;
-import client.utilities.Response;
-import client.utilities.ResponseException;
+import commons.exceptions.BadResponseException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.Response;
+import commons.exceptions.ResponseException;
 import lombok.Getter;
 
 

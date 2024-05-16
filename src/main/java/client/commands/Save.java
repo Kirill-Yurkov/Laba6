@@ -2,8 +2,8 @@ package client.commands;
 
 import client.commands.interfaces.Command;
 import client.Client;
-import client.utilities.CommandValues;
-import client.utilities.Request;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 /**
  * The Save class represents a command to save the collection to a file.

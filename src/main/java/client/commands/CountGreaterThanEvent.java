@@ -2,14 +2,12 @@ package client.commands;
 
 import client.commands.interfaces.Command;
 import client.Client;
-import client.exceptions.CommandCollectionZeroException;
-import client.exceptions.CommandValueException;
-import client.patternclass.Ticket;
-import client.utilities.CommandValues;
-import client.utilities.Request;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * The 'CountGreaterThanEvent' class represents a command that counts the number of tickets whose associated event has a ticket count greater than a given value.

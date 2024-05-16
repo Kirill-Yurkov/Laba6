@@ -2,12 +2,10 @@ package client.commands;
 
 import client.Client;
 import client.commands.interfaces.Command;
-import client.exceptions.BadResponseException;
-import client.exceptions.StopCreateTicketExceptionByClient;
-import client.patternclass.Ticket;
-import client.utilities.CommandValues;
-import client.utilities.Request;
-import client.utilities.Validator;
+import commons.exceptions.StopCreateTicketExceptionByClient;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 import java.util.ArrayList;
 

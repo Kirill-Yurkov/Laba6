@@ -1,4 +1,4 @@
-package server.exceptions;
+package commons.exceptions;
 /**
  * The CommandCollectionZeroException class is an exception that is thrown when a command collection is empty.
  * This exception is typically thrown when attempting to perform an operation on an empty command collection.

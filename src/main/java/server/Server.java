@@ -2,10 +2,10 @@ package server;
 
 import lombok.Getter;
 import lombok.Setter;
-import server.exceptions.CommandCollectionZeroException;
-import server.exceptions.CommandValueException;
-import server.exceptions.FileException;
-import server.exceptions.StopServerException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.exceptions.FileException;
+import commons.exceptions.StopServerException;
 import server.managers.CommandInvoker;
 import server.managers.FileManager;
 import server.managers.ListManager;

@@ -2,9 +2,9 @@ package client.commands;
 
 import client.commands.interfaces.Command;
 import client.Client;
-import client.exceptions.CommandCollectionZeroException;
-import client.utilities.CommandValues;
-import client.utilities.Request;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
 /**
  * The Info class implements the Command interface and represents a command to display information about the collection.

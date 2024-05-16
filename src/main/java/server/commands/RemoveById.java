@@ -2,10 +2,10 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.exceptions.CommandValueException;
-import server.patternclass.Ticket;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
 /**
  * The RemoveById class represents a command that removes an element from the collection based on its ID.
  * It implements the Command interface and provides functionality for executing the command.

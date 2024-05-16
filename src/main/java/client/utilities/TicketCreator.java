@@ -1,12 +1,13 @@
 package client.utilities;
 
 import client.Client;
-import client.exceptions.StopCreateTicketExceptionByClient;
+import commons.exceptions.StopCreateTicketExceptionByClient;
+import commons.utilities.Validator;
 import lombok.Getter;
-import client.patternclass.Coordinates;
-import client.patternclass.Event;
-import client.patternclass.Ticket;
-import client.patternclass.TicketType;
+import commons.patternclass.Coordinates;
+import commons.patternclass.Event;
+import commons.patternclass.Ticket;
+import commons.patternclass.TicketType;
 
 import java.util.Date;
 import java.util.Random;

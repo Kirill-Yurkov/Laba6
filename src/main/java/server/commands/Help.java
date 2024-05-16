@@ -2,7 +2,7 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.utilities.CommandValues;
+import commons.utilities.CommandValues;
 /**
  * The Help class represents a command that provides help and information about available commands.
  * It implements the Command interface.

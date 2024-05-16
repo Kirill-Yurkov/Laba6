@@ -2,9 +2,9 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandValueException;
-import server.exceptions.StopServerException;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandValueException;
+import commons.exceptions.StopServerException;
+import commons.utilities.CommandValues;
 
 import java.io.*;
 import java.util.HashSet;

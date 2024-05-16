@@ -2,9 +2,9 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.patternclass.Ticket;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
 /**
  * The Show class represents a command that displays all elements of the collection in a string representation.
  * It implements the Command interface and provides methods for executing the command, setting the server,

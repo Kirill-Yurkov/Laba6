@@ -2,9 +2,9 @@ package server.commands;
 
 import server.Server;
 import server.commands.interfaces.Command;
-import server.exceptions.CommandCollectionZeroException;
-import server.patternclass.Ticket;
-import server.utilities.CommandValues;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.patternclass.Ticket;
+import commons.utilities.CommandValues;
 /**
  * The AverageOfPrice class represents a command that calculates the average value of the 'price' field for all elements in the collection.
  * It implements the Command interface and provides methods for executing the command, setting the server, getting the command value, getting the command name, and getting the command description.

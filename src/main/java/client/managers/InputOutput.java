@@ -13,24 +13,13 @@ public class InputOutput {
     private BufferedReader readerConsole;
     @Getter
     private BufferedOutputStream writer;
-    @Getter
-    private ObjectInputStream readerPort;
     private String lastOut = "";
 
-    public void setReaderPort(ObjectInputStream readerPort) {
-        if(readerPort!=null){
-            try {
-                this.readerPort.close();
-            } catch (IOException ignored) {}
-            this.readerPort = readerPort;
-        }
-
-    }
     public void setReaderConsole(BufferedReader readerConsole) {
         if (readerConsole!=null){
             try {
                 this.readerConsole.close();
-            } catch (IOException ignored) {}
+            } catch (IOException | NullPointerException ignored) {}
             this.readerConsole = readerConsole;
         }
 
@@ -39,7 +28,7 @@ public class InputOutput {
         if(writer!=null){
             try{
                 this.writer.close();
-            } catch (IOException ignored){}
+            } catch (IOException | NullPointerException ignored){}
             this.writer = writer;
         }
     }
@@ -52,13 +41,6 @@ public class InputOutput {
         }
     }
 
-    public String inPutPort(){
-        try{
-            return  readerPort.readLine();
-        } catch (IOException e){
-            throw new RuntimeException(e);
-        }
-    }
     public void outPut(String text) {
         try {
             if(!lastOut.equals("\n") || !text.equals("\n")){

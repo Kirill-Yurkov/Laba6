@@ -2,14 +2,10 @@ package client.commands;
 
 import client.Client;
 import client.commands.interfaces.Command;
-import client.exceptions.CommandCollectionZeroException;
-import client.patternclass.Ticket;
-import client.utilities.CommandValues;
-import client.utilities.Request;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.utilities.CommandValues;
+import commons.utilities.Request;
 
-
-import java.util.ArrayList;
-import java.util.List;
 /**
  * The Clear class represents a command that clears the ticket collection.
  * It implements the Command interface and provides functionality for executing the command.

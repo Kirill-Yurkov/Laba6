@@ -1,9 +1,6 @@
-package client.utilities;
+package commons.utilities;
 
-import client.patternclass.Ticket;
 import server.patternclass.TicketType;
-
-import java.util.Date;
 
 /**
  * The Validator class provides utility methods for validating strings, integers, longs, and ticket types.

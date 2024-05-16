@@ -1,4 +1,4 @@
-package client.patternclass;
+package commons.patternclass;
 
 import lombok.Getter;
 import lombok.Setter;
