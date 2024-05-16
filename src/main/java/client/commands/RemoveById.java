@@ -48,7 +48,7 @@ public class RemoveById implements Command {
     }
 
     @Override
-    public Request execute(String value) throws CommandValueException, CommandCollectionZeroException {
+    public Request makeRequest(String value) throws CommandValueException, CommandCollectionZeroException {
         long id;
         try {
             id = Long.parseLong(value);

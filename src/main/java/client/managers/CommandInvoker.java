@@ -4,6 +4,8 @@ import client.Client;
 import client.commands.*;
 import client.commands.interfaces.Command;
 import client.exceptions.*;
+import client.utilities.Response;
+import client.utilities.ResponseException;
 import lombok.Getter;
 
 
@@ -37,28 +39,31 @@ public class CommandInvoker {
                 new FilterLessThanType());
     }
 
-    public String invoke(String commandName) throws CommandValueException, NullPointerException, CommandCollectionZeroException {
+    public String invoke(String commandName) throws CommandValueException, NullPointerException, CommandCollectionZeroException, BadResponseException {
         String[] s = commandName.strip().split(" ");
-        if(commandName.isEmpty()){
-            return "";
-        }
+
         switch (commands.get(s[0]).getValue()) {
             case NOTHING, ELEMENT -> {
                 if (s.length == 1) {
-                    return commands.get(s[0]).execute("");
+                    return client.getTcpClient().getAnswer(commands.get(s[0]).makeRequest(""));
                 }
                 throw new CommandValueException("unexpected values");
             }
             case VALUE, VALUE_ELEMENT -> {
                 if (s.length == 2) {
-                    return commands.get(s[0]).execute(s[1]);
+                    return client.getTcpClient().getAnswer(commands.get(s[0]).makeRequest(s[1]));
                 }
                 throw new CommandValueException("wrong values");
             }
             default -> throw new NullPointerException("");
         }
     }
-
+    public String invokeFromResponse(Response response){
+        return response.getAnswer();
+    }
+    public String invokeFromResponseException(ResponseException responseException){
+        return responseException.getException().getMessage().toLowerCase();
+    }
     private void registerCommand(Command... commandsToRegister) {
         for (Command command : commandsToRegister) {
             command.setClient(client);

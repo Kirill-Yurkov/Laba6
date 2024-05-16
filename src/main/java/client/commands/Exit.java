@@ -29,7 +29,7 @@ public class Exit implements Command {
     }
 
     @Override
-    public Request execute(String value){
+    public Request makeRequest(String value){
         client.stop();
         return new Request(getName(),getValue(), null);
     }

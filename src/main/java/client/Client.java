@@ -20,7 +20,7 @@ public class Client {
     @Setter
     private boolean withFile = false;
 
-    public Client(BufferedReader readerConsole, BufferedReader readerPort, BufferedOutputStream writer ) {
+    public Client(BufferedReader readerConsole, ObjectInputStream readerPort, BufferedOutputStream writer ) {
         inputOutput.setReaderConsole(readerConsole);
         inputOutput.setReaderPort(readerPort);
         inputOutput.setWriter(writer);
@@ -113,7 +113,7 @@ public class Client {
 
 
 
-    public String invoke(String commandName) throws StopServerException {
+    private String invoke(String commandName) throws StopServerException {
         try {
             return commandInvoker.invoke(commandName);
         } catch (CommandValueException e) {
@@ -122,6 +122,8 @@ public class Client {
             throw new StopServerException("incorrect command");
         } catch (CommandCollectionZeroException e) {
             throw new StopServerException("command is useless: " + e.getMessage());
+        } catch (BadResponseException e) {
+            throw new StopServerException("problem with answer from server: " + e.getMessage());
         }
     }
 }

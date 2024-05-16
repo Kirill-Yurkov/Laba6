@@ -1,6 +1,11 @@
 package client.managers;
 
 import client.Client;
+import client.exceptions.BadResponseException;
+import client.utilities.Request;
+import client.utilities.Response;
+import client.utilities.ResponseException;
+import client.utilities.Validator;
 
 import java.io.*;
 import java.net.*;
@@ -14,32 +19,30 @@ public class TCPClient {
     private static final Logger LOGGER = Logger.getLogger(TCPClient.class.getName());
 
     private Socket socket;
-    private BufferedReader in;
-    private BufferedOutputStream out;
+    private ObjectInputStream inPort;
+    private BufferedOutputStream outConsole;
+    private ObjectOutputStream outPort;
 
     public TCPClient(Client client){
         this.client = client;
     }
     public void openConnection() {
         if(checkConnection()){
-            try {
-                BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
-                client.getInputOutput().setReaderConsole(consoleInput);
-                client.getInputOutput().setReaderPort(in);
-                client.getInputOutput().setWriter(out);
-            } catch (IOException | ClassNotFoundException e) {
-                LOGGER.severe( "Ошибка при выполнении команды: " + e.getMessage());
-            }
+            BufferedReader consoleInput = new BufferedReader(new InputStreamReader(System.in));
+            client.getInputOutput().setReaderConsole(consoleInput);
+            client.getInputOutput().setReaderPort(inPort);
+            client.getInputOutput().setWriter(outConsole);
+        } else{
+            client.stop();
         }
-
     }
     private boolean checkConnection(){
         int attempts = 0;
         while (attempts < MAX_CONNECTION_ATTEMPTS) {
             try {
                 socket = new Socket("localhost", 7777);
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new BufferedOutputStream(socket.getOutputStream());
+                inPort = new ObjectInputStream(socket.getInputStream());
+                outPort = new ObjectOutputStream(socket.getOutputStream());
                 LOGGER.info("Подключение к серверу выполнено. "+socket);
                 return true;
             } catch (IOException e) {
@@ -54,5 +57,25 @@ public class TCPClient {
         }
         LOGGER.severe("Превышено количество попыток подключения. Завершение работы клиента.");
         return false;
+    }
+
+    public String getAnswer(Request request) throws BadResponseException {
+        try {
+            outPort.writeObject(request);
+            outPort.flush();
+            Object response = inPort.readObject();
+            if (response instanceof Response ) {
+                LOGGER.info("От сервера: " + response);
+                return client.getCommandInvoker().invokeFromResponse((Response) response);
+            } else if(response instanceof ResponseException) {
+                LOGGER.info("Exception с сервера" + response);
+                throw new BadResponseException(client.getCommandInvoker().invokeFromResponseException((ResponseException) response));
+            }else {
+                LOGGER.warning("Неверный формат ответа от сервера.");
+                throw new BadResponseException("bad response");
+            }
+        } catch (IOException | ClassNotFoundException e) {
+            throw new BadResponseException("bad gateway");
+        }
     }
 }

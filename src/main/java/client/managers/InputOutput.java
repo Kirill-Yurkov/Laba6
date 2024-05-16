@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 
 public class InputOutput {
     @Getter
@@ -13,26 +14,34 @@ public class InputOutput {
     @Getter
     private BufferedOutputStream writer;
     @Getter
-    private BufferedReader readerPort;
+    private ObjectInputStream readerPort;
     private String lastOut = "";
 
-    public void setReaderPort(BufferedReader readerPort) {
-        try {
-            this.readerPort.close();
-        } catch (IOException ignored) {}
-        this.readerPort = readerPort;
+    public void setReaderPort(ObjectInputStream readerPort) {
+        if(readerPort!=null){
+            try {
+                this.readerPort.close();
+            } catch (IOException ignored) {}
+            this.readerPort = readerPort;
+        }
+
     }
     public void setReaderConsole(BufferedReader readerConsole) {
-        try {
-            this.readerConsole.close();
-        } catch (IOException ignored) {}
-        this.readerConsole = readerConsole;
+        if (readerConsole!=null){
+            try {
+                this.readerConsole.close();
+            } catch (IOException ignored) {}
+            this.readerConsole = readerConsole;
+        }
+
     }
     public void setWriter(BufferedOutputStream writer) {
-        try{
-            this.writer.close();
-        } catch (IOException ignored){}
-        this.writer = writer;
+        if(writer!=null){
+            try{
+                this.writer.close();
+            } catch (IOException ignored){}
+            this.writer = writer;
+        }
     }
 
     public String inPutConsole() {

@@ -49,7 +49,7 @@ public class ExecuteScript implements Command {
     }
 
     @Override
-    public Request execute(String filePath) throws CommandValueException {
+    public Request makeRequest(String filePath) throws CommandValueException {
 
         if (checkFilePermission(filePath)) {
             if(!fileSet.contains(filePath)){

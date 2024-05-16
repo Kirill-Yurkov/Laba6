@@ -52,7 +52,7 @@ public class RemoveLower implements Command {
     }
 
     @Override
-    public Request execute(String value) throws CommandCollectionZeroException {
+    public Request makeRequest(String value) throws CommandCollectionZeroException {
         try {
            Ticket ticket = client.getTicketCreator().createTicketGroup();
             ArrayList<Object> params = new ArrayList<>();

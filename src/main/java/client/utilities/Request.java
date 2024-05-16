@@ -1,9 +1,11 @@
 package client.utilities;
 
 
+import lombok.Getter;
+
 import java.io.Serializable;
 import java.util.ArrayList;
-
+@Getter
 public class Request implements Serializable {
     private String name;
     private CommandValues commandValues;
@@ -12,5 +14,14 @@ public class Request implements Serializable {
         this.name = name;
         this.commandValues = commandValues;
         this.params = params;
+    }
+
+    @Override
+    public String toString() {
+        return "Request{" +
+                "name='" + name + '\'' +
+                ", commandValues=" + commandValues +
+                ", params=" + params +
+                '}';
     }
 }

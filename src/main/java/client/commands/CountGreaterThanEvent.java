@@ -38,7 +38,7 @@ public class CountGreaterThanEvent implements Command {
     }
 
     @Override
-    public Request execute(String value) throws CommandValueException, CommandCollectionZeroException {
+    public Request makeRequest(String value) throws CommandValueException, CommandCollectionZeroException {
         int ticketsCount;
         try {
             ticketsCount = Integer.parseInt(value);

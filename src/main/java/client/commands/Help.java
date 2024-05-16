@@ -42,7 +42,7 @@ public class Help implements Command {
         this.client = client;
     }
     @Override
-    public Request execute(String value){
+    public Request makeRequest(String value){
         return new Request(getName(),getValue(), null);
     }
 

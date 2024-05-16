@@ -43,7 +43,7 @@ public class Clear implements Command {
     }
 
     @Override
-    public Request execute(String value) throws CommandCollectionZeroException {
+    public Request makeRequest(String value) throws CommandCollectionZeroException {
         return new Request(getName(), getValue(), null);
     }
 

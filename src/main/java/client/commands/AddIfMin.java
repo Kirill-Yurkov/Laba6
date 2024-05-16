@@ -6,6 +6,7 @@ import client.exceptions.*;
 import client.utilities.CommandValues;
 import client.patternclass.Ticket;
 import client.utilities.Request;
+import client.utilities.Validator;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,7 +37,7 @@ public class AddIfMin implements Command {
     }
 
     @Override
-    public Request execute(String value) {
+    public Request makeRequest(String value) {
         Ticket ticket;
         try {
             if (client.isWithFile()) {

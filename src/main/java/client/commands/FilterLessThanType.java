@@ -41,7 +41,7 @@ public class FilterLessThanType implements Command {
     }
 
     @Override
-    public Request execute(String value) throws CommandValueException, CommandCollectionZeroException {
+    public Request makeRequest(String value) throws CommandValueException, CommandCollectionZeroException {
         TicketType type;
         try {
             type = TicketType.valueOf(value);
