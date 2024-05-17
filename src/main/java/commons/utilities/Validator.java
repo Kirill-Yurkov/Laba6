@@ -1,6 +1,6 @@
 package commons.utilities;
 
-import server.patternclass.TicketType;
+import commons.patternclass.TicketType;
 
 /**
  * The Validator class provides utility methods for validating strings, integers, longs, and ticket types.

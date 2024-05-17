@@ -1,6 +1,5 @@
 package client;
 
-import client.exceptions.*;
 import client.managers.CommandInvoker;
 import client.managers.InputOutput;
 import client.managers.TCPClient;
@@ -25,6 +24,7 @@ public class Client {
     private boolean withFile = false;
 
     public Client(BufferedReader readerConsole, BufferedOutputStream writer ) {
+        inputOutput.setSecondReaderConsole(readerConsole);
         inputOutput.setReaderConsole(readerConsole);
         inputOutput.setWriter(writer);
     }
@@ -101,7 +101,6 @@ public class Client {
                     }
                 } catch (StopServerException e) {
                     inputOutput.outPut("Script isn't valid: " + e.getMessage() + "\n");
-                    br.close();
                     withFile = false;
                     break;
                 }
@@ -110,6 +109,8 @@ public class Client {
         } catch (Exception e) {
             withFile = false;
             inputOutput.outPut("Script isn't valid: " + e.getMessage() + "\n");
+        }finally {
+            inputOutput.setReaderConsole(inputOutput.getSecondReaderConsole());
         }
     }
 

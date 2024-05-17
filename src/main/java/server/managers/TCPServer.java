@@ -1,5 +1,8 @@
 package server.managers;
 
+import commons.exceptions.BadResponseException;
+import commons.exceptions.ResponseException;
+import commons.utilities.Request;
 import commons.utilities.Response;
 
 import java.io.*;
@@ -56,23 +59,30 @@ class ClientHandler extends Thread {
 
     @Override
     public void run() {
-        try (ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())) {
+        try(ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+        ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())){
 
-            Object inputObject;
-
-            while ((inputObject = in.readObject()) != null) {
-                if (inputObject instanceof Response) {
-                    Response response = (Response) inputObject;
-                    Object result = response.getName()+"АХУЕННО";
-                    out.writeObject(result);
-                    out.flush();
-                    TCPServer.LOGGER.info("Выполнена команда: " + response.getClass().getSimpleName() + " от клиента " + clientSocket.getInetAddress());
-                } else {
-                    TCPServer.LOGGER.warning("Получен неверный объект от клиента " + clientSocket.getInetAddress());
+            for(;;) {
+                try {
+                    Object inputObject = in.readObject();
+                    if (inputObject instanceof Request) {
+                        Request request = (Request) inputObject;
+                        Response response = new Response(request.getName(), request.getName() );
+                        out.writeObject(response);
+                        out.flush();
+                        TCPServer.LOGGER.info("Выполнена команда: " + response.getName() + " от клиента " + clientSocket);
+                    } else {
+                        System.out.println(inputObject);
+                        out.writeObject(new ResponseException("WRONG", new BadResponseException("Неверный запрос")));
+                        TCPServer.LOGGER.warning("Получен неверный объект от клиента " + clientSocket);
+                    }
+                }catch (EOFException ignored){
+                    break;
                 }
             }
-        } catch (SocketException ignored){}
+        } catch (EOFException e){
+            e.printStackTrace();
+        }
         catch (IOException | ClassNotFoundException  e) {
             TCPServer.LOGGER.log(Level.SEVERE, "Ошибка в обработке клиента: " + e.getMessage(), e);
         } finally {

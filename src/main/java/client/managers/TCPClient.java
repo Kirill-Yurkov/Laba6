@@ -77,19 +77,22 @@ public class TCPClient {
             outPort.writeObject(request);
             outPort.flush();
             Object response = inPort.readObject();
-            if (response instanceof Response ) {
+            if (response instanceof Response) {
                 LOGGER.info("От сервера: " + response);
                 return client.getCommandInvoker().invokeFromResponse((Response) response);
-            } else if(response instanceof ResponseException) {
+            } else if (response instanceof ResponseException) {
                 LOGGER.info("Exception с сервера" + response);
                 throw new BadResponseException(client.getCommandInvoker().invokeFromResponseException((ResponseException) response));
-            }else {
+            } else {
                 LOGGER.warning("Неверный формат ответа от сервера.");
                 throw new BadResponseException("bad response");
             }
+        } catch (EOFException | SocketException e){
+            checkConnection();
+            return "Переподключаюсь...";
         } catch (IOException | ClassNotFoundException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
-            throw new BadResponseException("bad gateway");
+            throw new BadResponseException("bad channel");
         }
     }
     public void closeConnection() {

@@ -13,17 +13,18 @@ public class InputOutput {
     private BufferedReader readerConsole;
     @Getter
     private BufferedOutputStream writer;
+    @Getter
+    private BufferedReader secondReaderConsole;
     private String lastOut = "";
 
     public void setReaderConsole(BufferedReader readerConsole) {
-        if (readerConsole!=null){
-            try {
-                this.readerConsole.close();
-            } catch (IOException | NullPointerException ignored) {}
-            this.readerConsole = readerConsole;
-        }
-
+        this.readerConsole = readerConsole;
     }
+
+    public void setSecondReaderConsole(BufferedReader secondReaderConsole) {
+        this.secondReaderConsole = secondReaderConsole;
+    }
+
     public void setWriter(BufferedOutputStream writer) {
         if(writer!=null){
             try{
@@ -34,11 +35,14 @@ public class InputOutput {
     }
 
     public String inPutConsole() {
-        try {
-            return readerConsole.readLine();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if(readerConsole!=null){
+            try {
+                return readerConsole.readLine();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
+        return null;
     }
 
     public void outPut(String text) {

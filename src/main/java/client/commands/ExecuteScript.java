@@ -7,6 +7,7 @@ import commons.utilities.CommandValues;
 import commons.utilities.Request;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 /**
@@ -56,10 +57,9 @@ public class ExecuteScript implements Command {
                 fileSet.add(filePath);
                 client.setWithFile(true);
                 client.start(new File(filePath));
-                client.getInputOutput().setReaderConsole(new BufferedReader(new InputStreamReader(System.in)));
                 fileSet.remove(filePath);
                 client.setWithFile(false);
-                return null;
+                return new Request(getName(),getValue(),new ArrayList<>());
             } else {
                 client.setWithFile(false);
                 throw new CommandValueException("file has recursion");
@@ -74,13 +74,10 @@ public class ExecuteScript implements Command {
     private boolean checkFilePermission(String filePath) throws  CommandValueException {
         try {
             File file = new File(filePath);
-            FileReader f = new FileReader(file.getAbsoluteFile());
-            BufferedReader br = new BufferedReader(f);
-
-        } catch (FileNotFoundException e) {
-            throw new CommandValueException("file not found");
         } catch (SecurityException e) {
             throw new CommandValueException("file permission denied");
+        } catch (Exception e) {
+            throw new CommandValueException("file not found");
         }
         return true;
     }

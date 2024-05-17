@@ -3,16 +3,15 @@ package client.managers;
 import client.Client;
 import client.commands.*;
 import client.commands.interfaces.Command;
-import client.exceptions.*;
 import commons.exceptions.BadResponseException;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
-import commons.utilities.Response;
 import commons.exceptions.ResponseException;
+import commons.utilities.Response;
 import lombok.Getter;
 
-
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,7 +43,6 @@ public class CommandInvoker {
 
     public String invoke(String commandName) throws CommandValueException, NullPointerException, CommandCollectionZeroException, BadResponseException {
         String[] s = commandName.strip().split(" ");
-
         switch (commands.get(s[0]).getValue()) {
             case NOTHING, ELEMENT -> {
                 if (s.length == 1) {
@@ -61,12 +59,15 @@ public class CommandInvoker {
             default -> throw new NullPointerException("");
         }
     }
-    public String invokeFromResponse(Response response){
+
+    public String invokeFromResponse(Response response) {
         return response.getAnswer();
     }
-    public String invokeFromResponseException(ResponseException responseException){
+
+    public String invokeFromResponseException(ResponseException responseException) {
         return responseException.getException().getMessage().toLowerCase();
     }
+
     private void registerCommand(Command... commandsToRegister) {
         for (Command command : commandsToRegister) {
             command.setClient(client);

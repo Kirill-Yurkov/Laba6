@@ -4,12 +4,13 @@ package commons.utilities;
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+
 @Getter
 public class Response implements Serializable {
     private String name;
     private String answer;
-    public Response(String name, String answer){
+
+    public Response(String name, String answer) {
         this.name = name;
         this.answer = answer;
     }

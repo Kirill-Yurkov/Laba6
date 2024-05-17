@@ -2,7 +2,7 @@ package client.commands;
 
 import client.Client;
 import client.commands.interfaces.Command;
-import client.exceptions.*;
+import commons.exceptions.*;
 import commons.exceptions.StopCreateTicketExceptionByClient;
 import commons.utilities.CommandValues;
 import commons.patternclass.Ticket;
