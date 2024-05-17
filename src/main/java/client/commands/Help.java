@@ -4,6 +4,9 @@ import client.commands.interfaces.Command;
 import client.Client;
 import commons.utilities.CommandValues;
 import commons.utilities.Request;
+import commons.utilities.Response;
+
+import java.util.ArrayList;
 
 /**
  * The Help class represents a command that provides help and information about available commands.
@@ -43,7 +46,12 @@ public class Help implements Command {
     }
     @Override
     public Request makeRequest(String value){
-        return new Request(getName(),getValue(), null);
+        StringBuilder str = new StringBuilder();
+        for(client.commands.interfaces.Command command: client.getCommandInvoker().getCommands()){
+            str.append("\n").append(command.getName()).append(" : ").append(command.description());
+        }
+        client.getInputOutput().outPut(String.valueOf(str));
+        return new Request(getName(),getValue(), new ArrayList<Object>());
     }
 
     @Override

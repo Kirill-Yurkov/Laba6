@@ -6,6 +6,8 @@ import commons.exceptions.CommandCollectionZeroException;
 import commons.utilities.CommandValues;
 import commons.utilities.Request;
 
+import java.util.ArrayList;
+
 /**
  * The Info class implements the Command interface and represents a command to display information about the collection.
  * It provides methods to get the command value, set the client, execute the command, get the command name, and get the command description.
@@ -32,7 +34,7 @@ public class Info implements Command {
 
     @Override
     public Request makeRequest(String value) throws CommandCollectionZeroException {
-        return new Request(getName(),getValue(),null);
+        return new Request(getName(),getValue(),new ArrayList<>());
     }
 
     @Override

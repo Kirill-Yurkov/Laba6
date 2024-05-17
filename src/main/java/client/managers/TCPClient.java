@@ -4,7 +4,7 @@ import client.Client;
 import commons.exceptions.BadResponseException;
 import commons.utilities.Request;
 import commons.utilities.Response;
-import commons.exceptions.ResponseException;
+import commons.utilities.ResponseOfException;
 
 import java.io.*;
 import java.net.*;
@@ -80,9 +80,9 @@ public class TCPClient {
             if (response instanceof Response) {
                 LOGGER.info("От сервера: " + response);
                 return client.getCommandInvoker().invokeFromResponse((Response) response);
-            } else if (response instanceof ResponseException) {
-                LOGGER.info("Exception с сервера" + response);
-                throw new BadResponseException(client.getCommandInvoker().invokeFromResponseException((ResponseException) response));
+            } else if (response instanceof ResponseOfException) {
+                LOGGER.info("Ответ от сервре" + response);
+                throw new BadResponseException(client.getCommandInvoker().invokeFromResponseException((ResponseOfException) response));
             } else {
                 LOGGER.warning("Неверный формат ответа от сервера.");
                 throw new BadResponseException("bad response");

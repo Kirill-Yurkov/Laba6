@@ -6,12 +6,11 @@ import client.commands.interfaces.Command;
 import commons.exceptions.BadResponseException;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
-import commons.exceptions.ResponseException;
+import commons.utilities.ResponseOfException;
 import commons.utilities.Response;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +29,6 @@ public class CommandInvoker {
                 new Update(),
                 new RemoveById(),
                 new Clear(),
-                new Save(),
                 new ExecuteScript(),
                 new Exit(),
                 new AddIfMin(),
@@ -64,8 +62,8 @@ public class CommandInvoker {
         return response.getAnswer();
     }
 
-    public String invokeFromResponseException(ResponseException responseException) {
-        return responseException.getException().getMessage().toLowerCase();
+    public String invokeFromResponseException(ResponseOfException responseOfException) {
+        return responseOfException.getException().getMessage().toLowerCase();
     }
 
     private void registerCommand(Command... commandsToRegister) {

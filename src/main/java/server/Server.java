@@ -1,14 +1,14 @@
 package server;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.ServerMainResponseException;
+import commons.utilities.Request;
+import commons.utilities.Response;
 import lombok.Getter;
 import lombok.Setter;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
-import commons.exceptions.FileException;
-import commons.exceptions.StopServerException;
-import server.managers.CommandInvoker;
-import server.managers.FileManager;
-import server.managers.ListManager;
+import server.managers.*;
 import server.utilities.IdCounter;
 import server.utilities.TicketCreator;
 
@@ -39,6 +39,7 @@ public class Server {
     private final ListManager listManager = new ListManager(this);
     private final IdCounter idCounter = new IdCounter(this);
     private final TicketCreator ticketCreator = new TicketCreator(this);
+    private final TCPServer tcpServer = new TCPServer(this);
     private final FileManager.ReaderWriter readerWriter = fileManager.new ReaderWriter();
     private final FileManager.InputOutput inputOutput = fileManager.new InputOutput();
     private boolean serverOn;
@@ -53,10 +54,10 @@ public class Server {
 
     public static void main(String[] args) {
         Server server = new Server(new BufferedReader(new InputStreamReader(System.in)), new BufferedOutputStream(System.out));
-        if (args.length == 1) {
+        if (args.length == 1 ) {
             server.getFileManager().initializeFile(args[0]);
         }
-        server.start();
+        server.tcpServer.openConnection();
     }
     public void stop() {
         serverOn = false;
@@ -66,86 +67,19 @@ public class Server {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
     }
 
-
-    public void start() {
-        if (fileManager.initializeFile()) {
-            serverOn = true;
-            boolean isCommandWas = true;
-            while (serverOn) {
-                try {
-                    if (isCommandWas){
-                        inputOutput.outPut("Введите комманду (для справки используйте комманду help) \n~ ");
-                    } else {
-                        inputOutput.outPut("~ ");
-                    }
-                    String commandFromConsole = inputOutput.inPut();
-                    if (commandFromConsole == null){
-                        inputOutput.outPut("\nПолучен сигнал завершения работы.");
-                        serverOn = false;
-                        return;
-                    }
-                    if(commandFromConsole.isBlank() || commandFromConsole.isEmpty()){
-                        isCommandWas = false;
-                    } else {
-                        isCommandWas = true;
-                        String str = invoke(commandFromConsole);
-                        if (str != null) {
-                            inputOutput.outPut(str + "\n");
-                            inputOutput.outPut("\n");
-                        } else {
-                            inputOutput.outPut("\n");
-                        }
-                    }
-                } catch (StopServerException e) {
-                    inputOutput.outPut("Command isn't valid: " + e.getMessage() + "\n");
-                    inputOutput.outPut("\n");
-                }
-            }
-        }
-    }
-
-    public void start(File file) {
+    public Response invoke(Request request) throws ServerMainResponseException {
         try {
-            FileReader f = new FileReader(file.getAbsolutePath());
-            BufferedReader br = new BufferedReader(f);
-            inputOutput.setReader(br);
-            String commandFromConsole;
-            while ((commandFromConsole = br.readLine()) != null) {
-                try {
-                    String str = invoke(commandFromConsole);
-                    if (str != null) {
-                        inputOutput.outPut(str + "\n");
-                    } else {
-                        inputOutput.outPut("\n");
-                    }
-                } catch (StopServerException e) {
-                    inputOutput.outPut("Script isn't valid: " + e.getMessage() + "\n");
-                    br.close();
-                    withFile = false;
-                    break;
-                }
-            }
-            br.close();
-        } catch (Exception e) {
-            withFile = false;
-            inputOutput.outPut("Script isn't valid: " + e.getMessage() + "\n");
-        }
-    }
-
-
-
-    public String invoke(String commandName) throws StopServerException {
-        try {
-            return commandInvoker.invoke(commandName);
+            return commandInvoker.invoke(request);
         } catch (CommandValueException e) {
-            throw new StopServerException("incorrect value of command: " + e.getMessage());
+            throw new ServerMainResponseException("incorrect value of command: " + e.getMessage());
         } catch (NullPointerException ignored) {
-            throw new StopServerException("incorrect command");
+            throw new ServerMainResponseException("incorrect command");
         } catch (CommandCollectionZeroException e) {
-            throw new StopServerException("command is useless: " + e.getMessage());
+            throw new ServerMainResponseException("command is useless: " + e.getMessage());
+        } catch (BadRequestException e){
+            throw new ServerMainResponseException("wrong values of request: "+ e.getMessage());
         }
     }
 }

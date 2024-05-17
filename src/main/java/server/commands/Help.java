@@ -1,8 +1,15 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The Help class represents a command that provides help and information about available commands.
  * It implements the Command interface.
@@ -39,14 +46,12 @@ public class Help implements Command {
     public void setServer(Server server) {
         this.server = server;
     }
+
     @Override
-    public String execute(String value){
-        StringBuilder str = new StringBuilder();
-        for(Command command: server.getCommandInvoker().getCommands()){
-            str.append("\n").append(command.getName()).append(" : ").append(command.description());
-        }
-        return str.toString();
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
+        return new Response(getName(), "successfully");
     }
+
 
     @Override
     public String getName() {

@@ -1,12 +1,15 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.exceptions.CommandValueException;
-import commons.exceptions.StopServerException;
 import commons.utilities.CommandValues;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 /**
@@ -49,42 +52,9 @@ public class ExecuteScript implements Command {
     }
 
     @Override
-    public String execute(String filePath) throws CommandValueException {
-
-        if (checkFilePermission(filePath)) {
-            if(!fileSet.contains(filePath)){
-                fileSet.add(filePath);
-                server.setWithFile(true);
-                server.start(new File(filePath));
-                server.getInputOutput().setReader(new BufferedReader(new InputStreamReader(System.in)));
-                fileSet.remove(filePath);
-                server.setWithFile(false);
-                return null;
-            } else {
-                server.setWithFile(false);
-                throw new CommandValueException("file has recursion");
-            }
-
-        }else {
-            server.setWithFile(false);
-            throw new CommandValueException("error");
-        }
-
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
+        return new Response(getName(), "successfully");
     }
-    private boolean checkFilePermission(String filePath) throws  CommandValueException {
-        try {
-            File file = new File(filePath);
-            FileReader f = new FileReader(file.getAbsoluteFile());
-            BufferedReader br = new BufferedReader(f);
-
-        } catch (FileNotFoundException e) {
-            throw new CommandValueException("file not found");
-        } catch (SecurityException e) {
-            throw new CommandValueException("file permission denied");
-        }
-        return true;
-    }
-
     @Override
     public String getName() {
         return "execute_script";

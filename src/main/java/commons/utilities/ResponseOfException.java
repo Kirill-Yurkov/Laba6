@@ -1,15 +1,15 @@
-package commons.exceptions;
+package commons.utilities;
 
 
 import lombok.Getter;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+
 @Getter
-public class ResponseException implements Serializable {
+public class ResponseOfException implements Serializable {
     private String name;
     private Exception exception ;
-    public ResponseException(String name, Exception exception){
+    public ResponseOfException(String name, Exception exception){
         this.name = name;
         this.exception = exception;
     }

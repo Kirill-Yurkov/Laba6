@@ -1,5 +1,7 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.exceptions.CommandCollectionZeroException;
@@ -7,6 +9,9 @@ import commons.exceptions.CommandValueException;
 import commons.exceptions.StopCreateTicketExceptionByClient;
 import commons.patternclass.Ticket;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The 'Update' class represents a command that updates the value of an element in the collection
  * with the specified ID.
@@ -34,33 +39,47 @@ public class Update implements Command {
     }
 
     @Override
-    public String execute(String value) throws CommandValueException, CommandCollectionZeroException {
-        long id;
-        try {
-            id = Long.parseLong(value);
-        } catch (NumberFormatException ignored){
-            throw new CommandValueException("long");
-        }
-        if(server.getListManager().getTicketList().isEmpty()){
-            throw new CommandCollectionZeroException("collection is zero");
-        }
-        for(Ticket ticket: server.getListManager().getTicketList()){
-            if (ticket.getId() == id){
-                server.getListManager().remove(ticket);
-                try {
-                    Ticket newTicket = server.getTicketCreator().createTicketGroup();
-                    newTicket.setId(id);
-                    if(newTicket.getEvent()!=null){
-                        newTicket.getEvent().setId(server.getIdCounter().getIdForEvent(newTicket.getEvent()));
-                    }
-                    server.getListManager().add(newTicket);
-                    return "successfully";
-                } catch (StopCreateTicketExceptionByClient e) {
-                    return null;
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
+        if((params.get(0) instanceof Ticket && params.get(1) instanceof Long)||(params.get(1) instanceof Ticket && params.get(0) instanceof Long)){
+            if(params.get(0) instanceof Ticket){
+                long id = (long) params.get(1);
+                if(server.getListManager().getTicketList().isEmpty()){
+                    throw new CommandCollectionZeroException("collection is zero");
                 }
+                for(Ticket ticket: server.getListManager().getTicketList()){
+                    if (ticket.getId() == id){
+                        server.getListManager().remove(ticket);
+                        Ticket newTicket = (Ticket) params.get(0);
+                        newTicket.setId(id);
+                        if(newTicket.getEvent()!=null){
+                            newTicket.getEvent().setId(server.getIdCounter().getIdForEvent(newTicket.getEvent()));
+                        }
+                        server.getListManager().add(newTicket);
+                        return new Response(getName(), "successfully");
+                    }
+                }
+                throw new CommandValueException("id not find");
+            } else{
+                long id = (long) params.get(0);
+                if(server.getListManager().getTicketList().isEmpty()){
+                    throw new CommandCollectionZeroException("collection is zero");
+                }
+                for(Ticket ticket: server.getListManager().getTicketList()){
+                    if (ticket.getId() == id){
+                        server.getListManager().remove(ticket);
+                        Ticket newTicket = (Ticket) params.get(1);
+                        newTicket.setId(id);
+                        if(newTicket.getEvent()!=null){
+                            newTicket.getEvent().setId(server.getIdCounter().getIdForEvent(newTicket.getEvent()));
+                        }
+                        server.getListManager().add(newTicket);
+                        return new Response(getName(), "successfully");
+                    }
+                }
+                throw new CommandValueException("id not find");
             }
         }
-        throw new CommandValueException("id not find");
+        throw new BadRequestException("need a Ticket and Long");
     }
 
     @Override

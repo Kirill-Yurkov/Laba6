@@ -1,9 +1,11 @@
 package server.managers;
 
 import commons.exceptions.BadResponseException;
-import commons.exceptions.ResponseException;
+import commons.utilities.ResponseOfException;
+import commons.exceptions.ServerMainResponseException;
 import commons.utilities.Request;
 import commons.utilities.Response;
+import server.Server;
 
 import java.io.*;
 import java.net.*;
@@ -12,7 +14,7 @@ import java.util.logging.*;
 public class TCPServer {
     private static final int PORT = 7777;
     public static final Logger LOGGER = Logger.getLogger(TCPServer.class.getName());
-
+    private Server server;
     static {
         try {
             LogManager.getLogManager().reset();
@@ -31,7 +33,11 @@ public class TCPServer {
         }
     }
 
-    public static void main(String[] args) {
+    public TCPServer(Server server){
+        this.server = server;
+    }
+
+    public void openConnection(){
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             LOGGER.info("Сервер запущен и ожидает подключения на порту " + PORT);
 
@@ -39,7 +45,7 @@ public class TCPServer {
                 try {
                     Socket clientSocket = serverSocket.accept();
                     LOGGER.info("Клиент подключился: " + clientSocket.getInetAddress());
-                    new ClientHandler(clientSocket).start();
+                    new ClientHandler(clientSocket, server).start();
                 } catch (IOException e) {
                     LOGGER.log(Level.SEVERE, "Ошибка при подключении клиента: " + e.getMessage(), e);
                 }
@@ -52,40 +58,45 @@ public class TCPServer {
 
 class ClientHandler extends Thread {
     private Socket clientSocket;
-
-    public ClientHandler(Socket socket) {
+    private Server server;
+    public ClientHandler(Socket socket, Server server) {
         this.clientSocket = socket;
+        this.server = server;
     }
 
     @Override
     public void run() {
-        try(ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
-        ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())){
+        try (ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream());
+             ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream())) {
 
-            for(;;) {
+            for (; ; ) {
                 try {
                     Object inputObject = in.readObject();
                     if (inputObject instanceof Request) {
                         Request request = (Request) inputObject;
-                        Response response = new Response(request.getName(), request.getName() );
-                        out.writeObject(response);
+                        try {
+                            Response response = server.invoke(request);
+                            out.writeObject(response);
+                            TCPServer.LOGGER.info("Выполнена команда: " + response.getName() + " от клиента " + clientSocket);
+                        } catch (ServerMainResponseException e){
+                            ResponseOfException responseOfException = new ResponseOfException(request.getName(), e);
+                            out.writeObject(responseOfException);
+                            TCPServer.LOGGER.info("Выполнена команда: " + responseOfException.getName() + " от клиента " + clientSocket);
+                        }
                         out.flush();
-                        TCPServer.LOGGER.info("Выполнена команда: " + response.getName() + " от клиента " + clientSocket);
                     } else {
                         System.out.println(inputObject);
-                        out.writeObject(new ResponseException("WRONG", new BadResponseException("Неверный запрос")));
+                        out.writeObject(new ResponseOfException("WRONG", new BadResponseException("Неверный запрос")));
                         TCPServer.LOGGER.warning("Получен неверный объект от клиента " + clientSocket);
                     }
-                }catch (EOFException ignored){
+                } catch (EOFException | SocketException ignored) {
                     break;
                 }
             }
-        } catch (EOFException e){
-            e.printStackTrace();
-        }
-        catch (IOException | ClassNotFoundException  e) {
+        } catch (IOException | ClassNotFoundException e) {
             TCPServer.LOGGER.log(Level.SEVERE, "Ошибка в обработке клиента: " + e.getMessage(), e);
         } finally {
+            server.getReaderWriter().writeXML(server.getFileManager().getFilePath(), server.getListManager().getTicketList());
             try {
                 clientSocket.close();
             } catch (IOException e) {
@@ -95,3 +106,4 @@ class ClientHandler extends Thread {
         }
     }
 }
+

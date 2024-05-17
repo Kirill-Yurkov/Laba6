@@ -6,6 +6,8 @@ import commons.exceptions.CommandCollectionZeroException;
 import commons.utilities.CommandValues;
 import commons.utilities.Request;
 
+import java.util.ArrayList;
+
 /**
  * The AverageOfPrice class represents a command that calculates the average value of the 'price' field for all elements in the collection.
  * It implements the Command interface and provides methods for executing the command, setting the client, getting the command value, getting the command name, and getting the command description.
@@ -39,7 +41,7 @@ public class AverageOfPrice implements Command {
 
     @Override
     public Request makeRequest(String value) throws CommandCollectionZeroException {
-        return new Request(getName(), getValue(), null);
+        return new Request(getName(), getValue(), new ArrayList<>());
     }
 
     @Override

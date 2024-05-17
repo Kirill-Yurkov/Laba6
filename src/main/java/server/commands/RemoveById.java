@@ -1,11 +1,16 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
 import commons.patternclass.Ticket;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The RemoveById class represents a command that removes an element from the collection based on its ID.
  * It implements the Command interface and provides functionality for executing the command.
@@ -44,24 +49,23 @@ public class RemoveById implements Command {
     }
 
     @Override
-    public String execute(String value) throws CommandValueException, CommandCollectionZeroException {
-        long id;
-        try {
-            id = Long.parseLong(value);
-        } catch (NumberFormatException ignored){
-            throw new CommandValueException("long");
-        }
-        if(server.getListManager().getTicketList().isEmpty()){
-            throw new CommandCollectionZeroException("collection is empty");
-        }
-        for(Ticket ticket: server.getListManager().getTicketList()){
-            if(ticket.getId() == id){
-                server.getListManager().remove(ticket);
-                return "successfully";
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
+        if(params.get(0) instanceof Long){
+            long id = (long) params.get(0);
+            if(server.getListManager().getTicketList().isEmpty()){
+                throw new CommandCollectionZeroException("collection is empty");
             }
+            for(Ticket ticket: server.getListManager().getTicketList()){
+                if(ticket.getId() == id){
+                    server.getListManager().remove(ticket);
+                    return new Response(getName(), "successfully");
+                }
+            }
+            throw new CommandValueException("id not find");
         }
-        throw new CommandValueException("id not find");
+        throw new BadRequestException("need a Long");
     }
+
 
     @Override
     public String getName() {

@@ -1,9 +1,15 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
-import commons.exceptions.StopServerException;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The Exit class represents a command to exit the program without saving to a file.
  * It implements the Command interface and provides the necessary methods to execute the command.
@@ -26,10 +32,11 @@ public class Exit implements Command {
     }
 
     @Override
-    public String execute(String value){
-        server.stop();
-        return "Successfully";
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
+        server.getReaderWriter().writeXML(server.getFileManager().getFilePath(), server.getListManager().getTicketList());
+        return new Response(getName(), "successfully");
     }
+
 
     @Override
     public String getName() {

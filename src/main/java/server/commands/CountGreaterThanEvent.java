@@ -1,11 +1,16 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
 import commons.patternclass.Ticket;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The 'CountGreaterThanEvent' class represents a command that counts the number of tickets whose associated event has a ticket count greater than a given value.
  *
@@ -33,23 +38,21 @@ public class CountGreaterThanEvent implements Command {
     }
 
     @Override
-    public String execute(String value) throws CommandValueException, CommandCollectionZeroException {
-        int count = 0;
-        int ticketsCount;
-        try {
-            ticketsCount = Integer.parseInt(value);
-        } catch (NumberFormatException ignored) {
-            throw new CommandValueException("int");
-        }
-        if(server.getListManager().getTicketList().isEmpty()){
-            throw new CommandCollectionZeroException("collection is zero");
-        }
-        for (Ticket ticket : server.getListManager().getTicketList()) {
-            if (ticket.getEvent() != null && ticket.getEvent().getTicketsCount() > ticketsCount) {
-                count += 1;
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
+        if(params.get(0) instanceof Integer){
+            int value = (int) params.get(0);
+            int count = 0;
+            if (server.getListManager().getTicketList().isEmpty()) {
+                throw new CommandCollectionZeroException("collection is zero");
             }
+            for (Ticket ticket : server.getListManager().getTicketList()) {
+                if (ticket.getEvent() != null && ticket.getEvent().getTicketsCount() > value) {
+                    count += 1;
+                }
+            }
+            return new Response(getName(), "Count events greater than " + value + " by ticket count: " + count + "\n");
         }
-        return "Count events greater than " + value + " by ticket count: " + count + "\n";
+        throw new BadRequestException("need an Integer");
     }
 
     @Override

@@ -1,9 +1,12 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
 import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
 import commons.exceptions.StopCreateTicketExceptionByClient;
 import commons.patternclass.Ticket;
 import commons.utilities.CommandValues;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 
@@ -53,9 +56,9 @@ public class RemoveLower implements Command {
     }
 
     @Override
-    public String execute(String value) throws CommandCollectionZeroException {
-        try {
-            Ticket newTicket = server.getTicketCreator().createTicketGroup();
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
+        if(params.get(0) instanceof Ticket) {
+            Ticket newTicket = (Ticket) params.get(0);
             List<Ticket> removeList = new ArrayList<>();
             if (server.getListManager().getTicketList().isEmpty()) {
                 throw new CommandCollectionZeroException("collection is zero");
@@ -68,11 +71,9 @@ public class RemoveLower implements Command {
             for (Ticket ticket : removeList) {
                 server.getListManager().getTicketList().remove(ticket);
             }
-            return "successfully";
-        } catch (StopCreateTicketExceptionByClient e) {
-            return null;
+            return new Response(getName(), "successfully");
         }
-
+        throw new BadRequestException("need a Ticket");
     }
 
     @Override

@@ -1,8 +1,15 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The Save class represents a command to save the collection to a file.
  * It implements the Command interface.
@@ -26,11 +33,13 @@ public class Save implements Command {
     public void setServer(Server server) {
         this.server = server;
     }
+
     @Override
-    public String execute(String value) {
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
         server.getReaderWriter().writeXML(server.getFileManager().getFilePath(), server.getListManager().getTicketList());
-        return "successfully";
+        return new Response(getName(), "successfully");
     }
+
 
     @Override
     public String getName() {

@@ -6,6 +6,8 @@ import commons.exceptions.CommandCollectionZeroException;
 import commons.utilities.CommandValues;
 import commons.utilities.Request;
 
+import java.util.ArrayList;
+
 /**
  * The Clear class represents a command that clears the ticket collection.
  * It implements the Command interface and provides functionality for executing the command.
@@ -40,7 +42,7 @@ public class Clear implements Command {
 
     @Override
     public Request makeRequest(String value) throws CommandCollectionZeroException {
-        return new Request(getName(), getValue(), null);
+        return new Request(getName(), getValue(), new ArrayList<>());
     }
 
     @Override

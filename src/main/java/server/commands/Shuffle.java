@@ -1,10 +1,14 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.utilities.CommandValues;
 
+import java.util.ArrayList;
 import java.util.Collections;
 /**
  * The Shuffle class represents a command that shuffles the elements of a collection in random order.
@@ -39,13 +43,14 @@ public class Shuffle implements Command {
     }
 
     @Override
-    public String execute(String value) throws CommandCollectionZeroException {
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
         if(server.getListManager().getTicketList().isEmpty()){
             throw new CommandCollectionZeroException("collection is zero");
         }
         Collections.shuffle(server.getListManager().getTicketList());
-        return "successfully shuffled";
+        return new Response(getName(),"successfully shuffled");
     }
+
 
 
     @Override

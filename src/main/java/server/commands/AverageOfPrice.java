@@ -1,10 +1,16 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.patternclass.Ticket;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The AverageOfPrice class represents a command that calculates the average value of the 'price' field for all elements in the collection.
  * It implements the Command interface and provides methods for executing the command, setting the server, getting the command value, getting the command name, and getting the command description.
@@ -37,7 +43,7 @@ public class AverageOfPrice implements Command {
     }
 
     @Override
-    public String execute(String value) throws CommandCollectionZeroException {
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
         int price = 0;
         for (Ticket ticket : server.getListManager().getTicketList()) {
             if (ticket.getPrice() != null) {
@@ -47,7 +53,7 @@ public class AverageOfPrice implements Command {
         if (server.getListManager().getTicketList().isEmpty()) {
             throw new CommandCollectionZeroException("collection is zero");
         } else {
-            return String.valueOf(price / server.getListManager().getTicketList().size());
+            return new Response(getName(),String.valueOf(price / server.getListManager().getTicketList().size()));
         }
     }
 

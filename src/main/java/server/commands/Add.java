@@ -1,10 +1,17 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
+import commons.exceptions.CommandCollectionZeroException;
+import commons.exceptions.CommandValueException;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
 import commons.exceptions.StopCreateTicketExceptionByClient;
 import commons.patternclass.Ticket;
 import commons.utilities.CommandValues;
+
+import java.util.ArrayList;
+
 /**
  * The 'Add' class is responsible for adding a new element to the collection.
  * It implements the 'Command' interface and provides the necessary methods to execute the command.
@@ -36,30 +43,17 @@ public class Add implements Command {
     }
 
     @Override
-    public String execute(String value) {
-        Ticket ticket = null;
-        try {
-            if(server.isWithFile()){
-                ticket = server.getTicketCreator().createTicketGroup(true);
-                ticket.setId(server.getIdCounter().getIdForTicket(ticket));
-                if(ticket.getEvent()!=null){
-                    ticket.getEvent().setId(server.getIdCounter().getIdForEvent(ticket.getEvent()));
-                }
-            } else{
-                ticket = server.getTicketCreator().createTicketGroup();
-                ticket.setId(server.getIdCounter().getIdForTicket(ticket));
-                if(ticket.getEvent()!=null){
-                    ticket.getEvent().setId(server.getIdCounter().getIdForEvent(ticket.getEvent()));
-                }
+    public Response makeResponse(ArrayList<Object> params) throws BadRequestException {
+        if(params.get(0) instanceof Ticket){
+            Ticket ticket = (Ticket) params.get(0);
+            ticket.setId(server.getIdCounter().getIdForTicket(ticket));
+            if(ticket.getEvent()!=null){
+                ticket.getEvent().setId(server.getIdCounter().getIdForEvent(ticket.getEvent()));
             }
-
             server.getListManager().add(ticket);
-            return "Successfully created";
-        } catch (StopCreateTicketExceptionByClient e) {
-            return null;
+            return new Response(getName(), "successfully created");
         }
-
-
+        throw new BadRequestException("need a Ticket");
     }
 
     @Override

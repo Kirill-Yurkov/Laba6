@@ -5,6 +5,8 @@ import client.Client;
 import commons.utilities.CommandValues;
 import commons.utilities.Request;
 
+import java.util.ArrayList;
+
 /**
  * The Exit class represents a command to exit the program without saving to a file.
  * It implements the Command interface and provides the necessary methods to execute the command.
@@ -29,7 +31,7 @@ public class Exit implements Command {
     @Override
     public Request makeRequest(String value){
         client.stop();
-        return new Request(getName(),getValue(), null);
+        return new Request(getName(),getValue(), new ArrayList<>());
     }
 
     @Override

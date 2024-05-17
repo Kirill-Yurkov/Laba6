@@ -7,7 +7,7 @@ import client.utilities.TicketCreator;
 import commons.exceptions.BadResponseException;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
-import commons.exceptions.StopServerException;
+import commons.exceptions.ServerMainResponseException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -72,13 +72,13 @@ public class Client {
                     isCommandWas = true;
                     String str = invoke(commandFromConsole);
                     if (str != null) {
-                        inputOutput.outPut(str + "\n");
+                        inputOutput.outPut("\n"+str + "\n");
                         inputOutput.outPut("\n");
                     } else {
                         inputOutput.outPut("\n");
                     }
                 }
-            } catch (StopServerException e) {
+            } catch (ServerMainResponseException e) {
                 inputOutput.outPut("Command isn't valid: " + e.getMessage() + "\n");
                 inputOutput.outPut("\n");
             }
@@ -99,7 +99,7 @@ public class Client {
                     } else {
                         inputOutput.outPut("\n");
                     }
-                } catch (StopServerException e) {
+                } catch (ServerMainResponseException e) {
                     inputOutput.outPut("Script isn't valid: " + e.getMessage() + "\n");
                     withFile = false;
                     break;
@@ -116,17 +116,17 @@ public class Client {
 
 
 
-    private String invoke(String commandName) throws StopServerException {
+    private String invoke(String commandName) throws ServerMainResponseException {
         try {
             return commandInvoker.invoke(commandName);
         } catch (CommandValueException e) {
-            throw new StopServerException("incorrect value of command: " + e.getMessage());
+            throw new ServerMainResponseException("incorrect value of command: " + e.getMessage());
         } catch (NullPointerException ignored) {
-            throw new StopServerException("incorrect command");
+            throw new ServerMainResponseException("incorrect command");
         } catch (CommandCollectionZeroException e) {
-            throw new StopServerException("command is useless: " + e.getMessage());
+            throw new ServerMainResponseException("command is useless: " + e.getMessage());
         } catch (BadResponseException e) {
-            throw new StopServerException("problem with answer from server: " + e.getMessage());
+            throw new ServerMainResponseException("problem from server: " + e.getMessage());
         }
     }
 }

@@ -1,12 +1,16 @@
 package server.commands;
 
+import commons.exceptions.BadRequestException;
 import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
 import commons.exceptions.StopCreateTicketExceptionByClient;
 import commons.patternclass.Ticket;
 import commons.utilities.CommandValues;
+import commons.utilities.Response;
 import server.Server;
 import server.commands.interfaces.Command;
+
+import java.util.ArrayList;
 
 /**
  * The 'AddIfMin' class represents a command that adds a new element to the collection if its value is smaller than the value of the smallest element in the collection.
@@ -35,12 +39,12 @@ public class AddIfMin implements Command {
     }
 
     @Override
-    public String execute(String value) throws CommandValueException, CommandCollectionZeroException {
+    public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
         if (server.getListManager().getTicketList().isEmpty()) {
             throw new CommandCollectionZeroException("collection is zero");
         }
-        try {
-            Ticket ticket = server.getTicketCreator().createTicketGroup();
+        if(params.get(0) instanceof Ticket){
+            Ticket ticket = (Ticket) params.get(0);
             int mini = Integer.MAX_VALUE;
             for (Ticket localTicket : server.getListManager().getTicketList()) {
                 if (localTicket.getPrice() != null && localTicket.getPrice() < mini) {
@@ -52,12 +56,11 @@ public class AddIfMin implements Command {
                 if (ticket.getEvent() != null) {
                     ticket.getEvent().setId(server.getIdCounter().getIdForEvent(ticket.getEvent()));
                 }
-                return "successfully";
+                return new Response(getName(), "successfully added");
             }
-        } catch (StopCreateTicketExceptionByClient e) {
-            return null;
+            throw new CommandValueException("price more than minimal");
         }
-        throw new CommandValueException("price more than minimal");
+        throw new BadRequestException("need a Ticket");
     }
 
     @Override

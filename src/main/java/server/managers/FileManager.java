@@ -7,7 +7,7 @@ import org.xml.sax.SAXException;
 import server.Server;
 import commons.exceptions.CommandValueException;
 import commons.exceptions.FileException;
-import commons.exceptions.StopServerException;
+import commons.exceptions.ServerMainResponseException;
 import commons.patternclass.Coordinates;
 import commons.patternclass.Event;
 import commons.patternclass.Ticket;
@@ -63,7 +63,7 @@ public class FileManager {
     public FileManager(Server server) {
         this.server = server;
     }
-    public void setFilePath(String filePath) throws StopServerException {
+    public void setFilePath(String filePath) throws ServerMainResponseException {
         if (new File(filePath).canRead() && new File(filePath).canWrite() && ".xml".equals(ReaderWriter.getFileExtension(filePath))) {
             try {
                 document = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new File(filePath));
@@ -71,12 +71,12 @@ public class FileManager {
                 server.getReaderWriter().readXML();
                 server.getListManager().readTicketList();
             } catch (FileException e) {
-                throw new StopServerException("File fail: " + e.getMessage());
+                throw new ServerMainResponseException("File fail: " + e.getMessage());
             } catch (SAXException | IOException | ParserConfigurationException e) {
                 throw new RuntimeException(e);
             }
         } else {
-            throw new StopServerException("Wrong file");
+            throw new ServerMainResponseException("Wrong file");
         }
     }
     public boolean initializeFile() {
@@ -110,7 +110,7 @@ public class FileManager {
                     return true;
                 }
 
-            } catch (StopServerException e) {
+            } catch (ServerMainResponseException e) {
                 server.getInputOutput().outPut(e.getMessage() + "\n");
                 isFileInitialized = false;
                 server.getInputOutput().outPut("\n");
@@ -147,7 +147,7 @@ public class FileManager {
                     server.getInputOutput().outPut("Файл успешно прочитан\n");
                 }
 
-            } catch (StopServerException e) {
+            } catch (ServerMainResponseException e) {
                 server.getInputOutput().outPut(e.getMessage() + "\n");
                 isFileInitialized = false;
                 server.getInputOutput().outPut("\n");
