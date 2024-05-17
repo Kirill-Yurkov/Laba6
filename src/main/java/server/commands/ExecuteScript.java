@@ -53,7 +53,7 @@ public class ExecuteScript implements Command {
 
     @Override
     public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
-        return new Response(getName(), "successfully");
+        return new Response(getName(), null);
     }
     @Override
     public String getName() {

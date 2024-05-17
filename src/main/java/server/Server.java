@@ -10,7 +10,6 @@ import commons.exceptions.CommandCollectionZeroException;
 import commons.exceptions.CommandValueException;
 import server.managers.*;
 import server.utilities.IdCounter;
-import server.utilities.TicketCreator;
 
 import java.io.*;
 
@@ -38,7 +37,6 @@ public class Server {
     private final FileManager fileManager = new FileManager(this);
     private final ListManager listManager = new ListManager(this);
     private final IdCounter idCounter = new IdCounter(this);
-    private final TicketCreator ticketCreator = new TicketCreator(this);
     private final TCPServer tcpServer = new TCPServer(this);
     private final FileManager.ReaderWriter readerWriter = fileManager.new ReaderWriter();
     private final FileManager.InputOutput inputOutput = fileManager.new InputOutput();
@@ -56,6 +54,8 @@ public class Server {
         Server server = new Server(new BufferedReader(new InputStreamReader(System.in)), new BufferedOutputStream(System.out));
         if (args.length == 1 ) {
             server.getFileManager().initializeFile(args[0]);
+        } else{
+            server.getFileManager().initializeFile("");
         }
         server.tcpServer.openConnection();
     }

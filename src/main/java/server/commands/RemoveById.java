@@ -51,10 +51,10 @@ public class RemoveById implements Command {
     @Override
     public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
         if(params.get(0) instanceof Long){
-            long id = (long) params.get(0);
             if(server.getListManager().getTicketList().isEmpty()){
                 throw new CommandCollectionZeroException("collection is empty");
             }
+            long id = (long) params.get(0);
             for(Ticket ticket: server.getListManager().getTicketList()){
                 if(ticket.getId() == id){
                     server.getListManager().remove(ticket);

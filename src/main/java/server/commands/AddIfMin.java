@@ -45,12 +45,12 @@ public class AddIfMin implements Command {
         }
         if(params.get(0) instanceof Ticket){
             Ticket ticket = (Ticket) params.get(0);
-            int mini = Integer.MAX_VALUE;
-            for (Ticket localTicket : server.getListManager().getTicketList()) {
-                if (localTicket.getPrice() != null && localTicket.getPrice() < mini) {
-                    mini = localTicket.getPrice();
-                }
-            }
+            int mini = server.getListManager().getTicketList().stream()
+                    .filter(localTicket -> localTicket.getPrice() != null)
+                    .mapToInt(Ticket::getPrice)
+                    .min()
+                    .orElse(Integer.MAX_VALUE);
+
             if (ticket.getPrice() < mini) {
                 ticket.setId(server.getIdCounter().getIdForTicket(ticket));
                 if (ticket.getEvent() != null) {

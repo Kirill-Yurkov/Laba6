@@ -25,9 +25,13 @@ public class TCPClient {
         try {
             LogManager.getLogManager().reset();
             LOGGER.setLevel(Level.ALL);
+
+            /*
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.ALL);
             LOGGER.addHandler(consoleHandler);
+            */
+
             FileHandler fileHandler = new FileHandler("client.log", true);
             fileHandler.setLevel(Level.ALL);
             fileHandler.setFormatter(new SimpleFormatter());

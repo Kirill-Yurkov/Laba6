@@ -20,9 +20,11 @@ public class TCPServer {
             LogManager.getLogManager().reset();
             LOGGER.setLevel(Level.ALL);
 
+            /*
             ConsoleHandler consoleHandler = new ConsoleHandler();
             consoleHandler.setLevel(Level.ALL);
             LOGGER.addHandler(consoleHandler);
+            */
 
             FileHandler fileHandler = new FileHandler("server.log", true);
             fileHandler.setLevel(Level.ALL);

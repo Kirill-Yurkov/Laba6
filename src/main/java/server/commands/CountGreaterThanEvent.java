@@ -40,16 +40,13 @@ public class CountGreaterThanEvent implements Command {
     @Override
     public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
         if(params.get(0) instanceof Integer){
-            int value = (int) params.get(0);
-            int count = 0;
             if (server.getListManager().getTicketList().isEmpty()) {
                 throw new CommandCollectionZeroException("collection is zero");
             }
-            for (Ticket ticket : server.getListManager().getTicketList()) {
-                if (ticket.getEvent() != null && ticket.getEvent().getTicketsCount() > value) {
-                    count += 1;
-                }
-            }
+            int value = (int) params.get(0);
+            long count = server.getListManager().getTicketList().stream()
+                    .filter(ticket -> ticket.getEvent() != null && ticket.getEvent().getTicketsCount() > value)
+                    .count();
             return new Response(getName(), "Count events greater than " + value + " by ticket count: " + count + "\n");
         }
         throw new BadRequestException("need an Integer");

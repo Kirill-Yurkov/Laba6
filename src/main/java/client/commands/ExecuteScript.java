@@ -59,7 +59,9 @@ public class ExecuteScript implements Command {
                 client.start(new File(filePath));
                 fileSet.remove(filePath);
                 client.setWithFile(false);
-                return new Request(getName(),getValue(),new ArrayList<>());
+                ArrayList<Object> params = new ArrayList<>();
+                params.add(filePath);
+                return new Request(getName(),getValue(),params);
             } else {
                 client.setWithFile(false);
                 throw new CommandValueException("file has recursion");

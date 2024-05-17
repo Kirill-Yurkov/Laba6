@@ -1,10 +1,5 @@
 package server.managers;
 
-import lombok.Getter;
-import lombok.Setter;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
-import server.Server;
 import commons.exceptions.CommandValueException;
 import commons.exceptions.FileException;
 import commons.exceptions.ServerMainResponseException;
@@ -13,6 +8,14 @@ import commons.patternclass.Event;
 import commons.patternclass.Ticket;
 import commons.patternclass.TicketType;
 import commons.utilities.Validator;
+import lombok.Getter;
+import lombok.Setter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import server.Server;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -33,18 +36,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.*;
+
 /**
  * The FileManager class is responsible for managing file operations in the server.
  * It provides functionality for setting the file path, initializing the file, and reading/writing XML files.
  * The FileManager class is used by the Server class to handle file-related tasks.
- *
+ * <p>
  * Usage:
  * FileManager fileManager = new FileManager(server);
  * fileManager.setFilePath(filePath); // Set the file path
  * fileManager.initializeFile(); // Initialize the file
  * fileManager.readXML(); // Read the XML file
  * fileManager.writeXML(filePath, tickets); // Write the XML file
- *
+ * <p>
  * Example:
  * FileManager fileManager = new FileManager(server);
  * fileManager.setFilePath(filePath);
@@ -59,10 +64,32 @@ public class FileManager {
     @Getter
     private String filePath;
     private Document document;
-    private boolean isFileInitialized =false;
+    public static final Logger LOGGER = Logger.getLogger(TCPServer.class.getName());
+
+    static {
+        try {
+            LogManager.getLogManager().reset();
+            LOGGER.setLevel(Level.ALL);
+
+            /*
+            ConsoleHandler consoleHandler = new ConsoleHandler();
+            consoleHandler.setLevel(Level.ALL);
+            LOGGER.addHandler(consoleHandler);
+            */
+
+            FileHandler fileHandler = new FileHandler("server.log", true);
+            fileHandler.setLevel(Level.ALL);
+            fileHandler.setFormatter(new SimpleFormatter());
+            LOGGER.addHandler(fileHandler);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Ошибка настройки логгера: " + e.getMessage(), e);
+        }
+    }
+
     public FileManager(Server server) {
         this.server = server;
     }
+
     public void setFilePath(String filePath) throws ServerMainResponseException {
         if (new File(filePath).canRead() && new File(filePath).canWrite() && ".xml".equals(ReaderWriter.getFileExtension(filePath))) {
             try {
@@ -70,91 +97,49 @@ public class FileManager {
                 this.filePath = filePath;
                 server.getReaderWriter().readXML();
                 server.getListManager().readTicketList();
-            } catch (FileException e) {
+            } catch (FileException | SAXException | IOException | ParserConfigurationException e) {
                 throw new ServerMainResponseException("File fail: " + e.getMessage());
-            } catch (SAXException | IOException | ParserConfigurationException e) {
-                throw new RuntimeException(e);
             }
         } else {
             throw new ServerMainResponseException("Wrong file");
         }
     }
-    public boolean initializeFile() {
-        if (isFileInitialized) {
-            return true;
-        } else {
-            server.getInputOutput().outPut("Введите путь до файла коллекции (xml) :\n~ ");
-            try {
-                String text = server.getInputOutput().inPut();
-                if (text == null) {
-                    server.getInputOutput().outPut("\nПолучен сигнал завершения работы.");
-                    server.stop();
-                    return false;
-                } else if (text.isEmpty()) {
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    Document document = builder.newDocument();
 
-                    Element root = document.createElement("root");
-
-                    document.appendChild(root);
-
-                    Transformer transformer = TransformerFactory.newInstance().newTransformer();
-                    transformer.transform(new DOMSource(document), new StreamResult(new File("New.xml")));
-                    server.getInputOutput().outPut("New file collection created: New.xml\n");
-                    return true;
-                } else {
-                    setFilePath(text);// src/main/resources/Collection.xml
-                    isFileInitialized = true;
-                    server.getInputOutput().outPut("\n");
-                    return true;
-                }
-
-            } catch (ServerMainResponseException e) {
-                server.getInputOutput().outPut(e.getMessage() + "\n");
-                isFileInitialized = false;
-                server.getInputOutput().outPut("\n");
-                return initializeFile();
-            } catch (Exception e){
-                isFileInitialized = false;
-                server.getInputOutput().outPut("\n");
-                return initializeFile();
-            }
-
-        }
-    }
-
-    public void initializeFile(String text) {
-            try {
-                if (text == null) {
-                    server.getInputOutput().outPut("\nОшибка.");
-                    server.stop();
-                } else if (text.isEmpty()) {
-                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                    DocumentBuilder builder = factory.newDocumentBuilder();
-                    Document document = builder.newDocument();
-
-                    Element root = document.createElement("TicketsBook");
-
-                    document.appendChild(root);
-
-                    Transformer transformer = TransformerFactory.newInstance().newTransformer();
-                    transformer.transform(new DOMSource(document), new StreamResult(new File("New.xml")));
-                    server.getInputOutput().outPut("New file collection created: New.xml\n");
-                } else {
-                    setFilePath(text);// src/main/resources/Collection.xml
-                    isFileInitialized = true;
+    public void initializeFile(String fileName) {
+        try {
+            if (fileName == null) {
+                server.getInputOutput().outPut("\nОшибка.");
+                LOGGER.severe("Ошибка с файлом");
+                server.stop();
+            } else if (fileName.isEmpty()) {
+                try {
+                    setFilePath("New.xml");
                     server.getInputOutput().outPut("Файл успешно прочитан\n");
+                    LOGGER.info("Файл успешно прочитан");
+                } catch (Exception ignored) {
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder builder = factory.newDocumentBuilder();
+                    Document document = builder.newDocument();
+                    Element root = document.createElement("TicketsBook");
+                    document.appendChild(root);
+                    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                    transformer.transform(new DOMSource(document), new StreamResult(new File("New.xml")));
+                    LOGGER.info("New file collection created: New.xml");
+                    server.getInputOutput().outPut("New file collection created: New.xml\n");
                 }
 
-            } catch (ServerMainResponseException e) {
-                server.getInputOutput().outPut(e.getMessage() + "\n");
-                isFileInitialized = false;
-                server.getInputOutput().outPut("\n");
-            } catch (Exception e){
-                isFileInitialized = false;
-                server.getInputOutput().outPut("\n");
+            } else {
+                setFilePath(fileName);// src/main/resources/Collection.xml
+                LOGGER.info("New file collection created: New.xml");
+                server.getInputOutput().outPut("Файл успешно прочитан\n");
             }
+
+        } catch (ServerMainResponseException e) {
+            server.getInputOutput().outPut(e.getMessage() + "\n");
+            server.getInputOutput().outPut("\n");
+        } catch (Exception e) {
+            server.getInputOutput().outPut("\n");
+        }
 
     }
 
@@ -167,6 +152,7 @@ public class FileManager {
         @Setter
         private BufferedOutputStream writer;
         private String lastOut = "";
+
         public String inPut() {
             try {
                 String str = reader.readLine();
@@ -178,7 +164,7 @@ public class FileManager {
 
         public void outPut(String text) {
             try {
-                if(!lastOut.equals("\n") || !text.equals("\n")){
+                if (!lastOut.equals("\n") || !text.equals("\n")) {
                     writer.write(text.getBytes());
                     writer.flush();
                     lastOut = text;
@@ -198,7 +184,7 @@ public class FileManager {
 
         public static String getFileExtension(String mystr) {
             int index = mystr.indexOf('.');
-            return index == -1? null : mystr.substring(index);
+            return index == -1 ? null : mystr.substring(index);
         }
 
         public void readXML() throws FileException {

@@ -44,12 +44,10 @@ public class AverageOfPrice implements Command {
 
     @Override
     public Response makeResponse(ArrayList<Object> params) throws CommandValueException, CommandCollectionZeroException, BadRequestException {
-        int price = 0;
-        for (Ticket ticket : server.getListManager().getTicketList()) {
-            if (ticket.getPrice() != null) {
-                price += ticket.getPrice();
-            }
-        }
+        int price = server.getListManager().getTicketList().stream()
+                .filter(ticket -> ticket.getPrice() != null)
+                .mapToInt(Ticket::getPrice)
+                .sum();
         if (server.getListManager().getTicketList().isEmpty()) {
             throw new CommandCollectionZeroException("collection is zero");
         } else {
