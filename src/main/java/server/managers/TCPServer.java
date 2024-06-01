@@ -19,13 +19,6 @@ public class TCPServer {
         try {
             LogManager.getLogManager().reset();
             LOGGER.setLevel(Level.ALL);
-
-            /*
-            ConsoleHandler consoleHandler = new ConsoleHandler();
-            consoleHandler.setLevel(Level.ALL);
-            LOGGER.addHandler(consoleHandler);
-            */
-
             FileHandler fileHandler = new FileHandler("server.log", true);
             fileHandler.setLevel(Level.ALL);
             fileHandler.setFormatter(new SimpleFormatter());

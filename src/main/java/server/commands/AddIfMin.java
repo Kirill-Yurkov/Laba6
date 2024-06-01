@@ -50,7 +50,6 @@ public class AddIfMin implements Command {
                     .mapToInt(Ticket::getPrice)
                     .min()
                     .orElse(Integer.MAX_VALUE);
-
             if (ticket.getPrice() < mini) {
                 ticket.setId(server.getIdCounter().getIdForTicket(ticket));
                 if (ticket.getEvent() != null) {
